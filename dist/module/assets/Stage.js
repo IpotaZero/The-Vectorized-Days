@@ -1,0 +1,2 @@
+import{n as e}from"./loadStageFromJson.js";var t=class{width;height;movables;start;enemySpawns;static mapUrl;isBossBattle=!1;constructor(e,t,n,r,i=[]){this.width=e,this.height=t,this.movables=n,this.start=r,this.enemySpawns=i}static async create(){let{width:t,height:n,movables:r,start:i,enemySpawns:a}=await e(this.mapUrl);return console.log(`Stage.create`,{width:t,height:n,movables:r,start:i,enemySpawns:a}),new this(t,n,r,i,a)}*setup(e){}};export{t as Stage};
+//# sourceMappingURL=Stage.js.map

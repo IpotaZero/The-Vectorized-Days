@@ -1,0 +1,43 @@
+#main {
+    box-shadow: 0 0 0.5em 0.5em #00000010;
+    height: 90%;
+}
+
+#clear,
+#pause,
+#gameover {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    height: 100%;
+
+    .kakomi {
+        h2 {
+            width: 100%;
+            text-align: center;
+            border-bottom: 0.03em solid #111;
+            padding-bottom: 0.1em;
+            font-weight: 400;
+        }
+
+        border-radius: 0.1em;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+
+        width: 33%;
+        height: 50%;
+        padding: 1em 2em;
+        border: 0.05em solid #111;
+
+        gap: 1em;
+
+        background: #303030;
+
+        z-index: 1000;
+    }
+}
