@@ -52,7 +52,7 @@ export class Player extends Actor {
         this.addScript(this.attack.bind(this), { loop: Infinity })
         this.addScript(this.physicsUpdate.bind(this), { loop: Infinity, id: "physics" })
 
-        this.gltfViewer.show("assets/3d/hare.glb", {
+        this.gltfViewer.show("assets/3d/Hare.glb", {
             scale: 1.2,
             p: [0, 0, -5],
             rotateY: T / 8,
