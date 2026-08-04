@@ -120,7 +120,9 @@ button {
         border-bottom: 0.05em solid #00000020;
         height: 1.5em;
     }
+}
 
+.text-box--done {
     .text {
         &::after {
             content: "/";

@@ -72,14 +72,9 @@ export default class extends Enemy {
     }
 
     private *text() {
-        yield* this.game.textBox.say(["おい！そこのお前！"], { name: "C8" })
-
-        yield* this.game.textBox.say(["..."], {
-            name: "???",
-        })
-
         yield* this.game.textBox.say(
             [
+                "おい！そこのお前！",
                 "へっへっへ、この先は獄卒が見張ってるぜぇ。",
                 "俺の忠告を無視するのかっ！？<br>生意気なヤツめっ。<br>やっつけてやる！",
                 "そこを動くんじゃあないぞ。決して矢印キーを押したりZを押したりするんじゃあないぞ！",
