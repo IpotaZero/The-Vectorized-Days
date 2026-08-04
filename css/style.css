@@ -42,6 +42,7 @@ body {
     position: relative;
 
     overflow: hidden;
+    color: #ffffff;
 }
 
 .hidden {
@@ -117,7 +118,7 @@ button {
     animation: fade-in 0.2s ease-out forwards;
 
     .name {
-        border-bottom: 0.05em solid #00000020;
+        border-bottom: 0.05em solid #fff4;
         height: 1.5em;
     }
 }
