@@ -31,7 +31,7 @@ export class TextBox {
     }
 
     *say(texts: readonly string[], config: TalkConfig = {}) {
-        this.option.innerText = ""
+        this.reset()
 
         for (const text of texts) {
             yield* this.saySingle(text, config)
@@ -48,11 +48,8 @@ export class TextBox {
         options: readonly string[] & { length: Length },
         { cancelable = false }: { cancelable?: boolean } = {},
     ): Generator<void, LessThan<Length> | undefined, void> {
+        this.reset()
         this.box.classList.remove("hidden")
-        this.box.classList.remove("text-box--done")
-
-        this.name.innerText = ""
-        this.text.innerText = ""
         this.option.innerHTML = options.map((option) => `<span>${option}</span>`).join("")
 
         let num: number | undefined = 0
@@ -80,6 +77,14 @@ export class TextBox {
         this.box.classList.add("hidden")
 
         return num as LessThan<Length> | undefined
+    }
+
+    private reset() {
+        this.box.classList.add("hidden")
+        this.box.classList.remove("text-box--done")
+        this.name.innerText = ""
+        this.text.innerText = ""
+        this.option.innerHTML = ""
     }
 
     private selectOption(num: number) {
