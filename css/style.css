@@ -101,6 +101,9 @@ button {
 }
 
 .text-box {
+    display: flex;
+    flex-direction: column;
+
     position: absolute;
     top: 1em;
     left: 1em;
@@ -120,6 +123,23 @@ button {
     .name {
         border-bottom: 0.05em solid #fff4;
         height: 1.5em;
+    }
+
+    .option {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        height: 100%;
+
+        .selected {
+            color: yellow;
+
+            &::before {
+                position: relative;
+                left: 0;
+                content: "→";
+            }
+        }
     }
 }
 

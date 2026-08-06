@@ -12,14 +12,17 @@ export class TextBox {
     readonly box = document.createElement("div")
     private readonly name: HTMLElement
     private readonly text: HTMLElement
+    private readonly option: HTMLElement
 
-    constructor(private readonly input: DigitalInput.Reader<"ok" | "cancel">) {
+    constructor(private readonly input: DigitalInput.Reader<"ok" | "cancel" | "up" | "down" | "right" | "left">) {
         this.box.innerHTML = `
             <div class="name"></div>
             <div class="text"></div>
+            <div class="option"></div>
         `
         this.name = this.box.querySelector(".name") as HTMLElement
         this.text = this.box.querySelector(".text") as HTMLElement
+        this.option = this.box.querySelector(".option") as HTMLElement
         this.box.classList.add("hidden", "text-box")
     }
 
@@ -28,10 +31,60 @@ export class TextBox {
     }
 
     *say(texts: readonly string[], config: TalkConfig = {}) {
+        this.option.innerText = ""
+
         for (const text of texts) {
             yield* this.saySingle(text, config)
             yield
         }
+    }
+
+    ask<Length extends number>(options: readonly string[] & { length: Length }): Generator<void, LessThan<Length>, void>
+    ask<Length extends number>(
+        options: readonly string[] & { length: Length },
+        { cancelable }: { cancelable: true },
+    ): Generator<void, LessThan<Length> | undefined, void>
+    *ask<Length extends number>(
+        options: readonly string[] & { length: Length },
+        { cancelable = false }: { cancelable?: boolean } = {},
+    ): Generator<void, LessThan<Length> | undefined, void> {
+        this.box.classList.remove("hidden")
+        this.box.classList.remove("text-box--done")
+
+        this.name.innerText = ""
+        this.text.innerText = ""
+        this.option.innerHTML = options.map((option) => `<span>${option}</span>`).join("")
+
+        let num: number | undefined = 0
+        this.selectOption(num)
+
+        while (1) {
+            if (this.input.isPushed("ok")) {
+                break
+            } else if (cancelable && this.input.isPushed("cancel")) {
+                num = undefined
+                break
+            } else if (this.input.isPushed("right")) {
+                num += 1
+                num %= options.length
+                this.selectOption(num)
+            } else if (this.input.isPushed("left")) {
+                num += options.length - 1
+                num %= options.length
+                this.selectOption(num)
+            }
+
+            yield
+        }
+
+        this.box.classList.add("hidden")
+
+        return num as LessThan<Length> | undefined
+    }
+
+    private selectOption(num: number) {
+        this.option.querySelectorAll(".selected").forEach((el) => el.classList.remove("selected"))
+        this.option.querySelector(`:nth-child(${num + 1})`)?.classList.add("selected")
     }
 
     private *saySingle(text: string, { name = "", charInterval = 2, canSkip = true }: TalkConfig) {
