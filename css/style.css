@@ -8,6 +8,8 @@
     margin: 0;
     padding: 0;
 
+    font-size: 20pt;
+
     user-select: none;
     touch-action: manipulation;
     -webkit-user-drag: none;
@@ -86,7 +88,6 @@ body {
 
 .option {
     position: relative;
-    cursor: pointer;
     opacity: 0.8;
 
     &.selected {
@@ -99,17 +100,8 @@ body {
     }
 }
 
-/* 矢印はラベルの外側に絶対配置し、ラベル自体の表示位置(中央揃え時の中心)に影響しないようにする */
 .option-label {
     position: relative;
-
-    &::before {
-        content: "→";
-        position: absolute;
-        right: 100%;
-        margin-right: 0.3em;
-        opacity: 0;
-    }
 }
 
 .option.selected .option-label::before {
@@ -119,6 +111,87 @@ body {
 #main {
     max-width: 100%;
     max-height: 100%;
+}
+
+.title-ui {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.title-version,
+.title-copyright {
+    position: absolute;
+    top: 0.8em;
+
+    font-family: "Courier New", monospace;
+    font-size: 0.7em;
+    letter-spacing: 0.05em;
+    opacity: 0.8;
+}
+
+.title-version {
+    left: 1em;
+}
+
+.title-copyright {
+    right: 1em;
+}
+
+.title-logo {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    padding: 0 0.15em;
+
+    font-weight: 900;
+    font-size: clamp(2.5rem, 6vw, 5.5rem);
+    line-height: 0.92;
+    letter-spacing: -0.01em;
+
+    color: #ffffff;
+}
+
+.title-menu {
+    top: 50%;
+    right: 0;
+    transform: translateY(10%);
+
+    align-items: stretch;
+    gap: 0;
+    width: 34%;
+
+    .menu-scroll-container {
+        gap: 0;
+    }
+
+    .option-row {
+        width: 100%;
+
+        height: fit-content;
+    }
+
+    .option {
+        width: 100%;
+        text-align: center;
+
+        height: fit-content;
+
+        background: #000000a8;
+
+        transition: background 0.15s ease-out;
+
+        &.selected {
+            background: #000000d0;
+            color: yellow;
+        }
+        padding: 0.4em 0;
+        padding-bottom: 0.5em;
+    }
+
+    .option-label {
+        padding-bottom: 0.1em;
+    }
 }
 
 .pause-menu {
@@ -186,8 +259,6 @@ button {
 
     font-size: 1.5em;
 
-    cursor: pointer;
-
     font-family: "normal", sans-serif;
 
     padding-bottom: 0.17em;
@@ -211,13 +282,6 @@ button {
     &[data-direction="column"] {
         flex-direction: column;
     }
-}
-
-:focus,
-.nav-focus {
-    outline: none;
-    background: #11111140 !important;
-    border-radius: 0.1em;
 }
 
 .text-box {
@@ -281,5 +345,11 @@ button {
     }
     100% {
         opacity: 1;
+    }
+}
+
+.title-menu {
+    .menu-scroll-container {
+        gap: 1em;
     }
 }

@@ -12,6 +12,7 @@ import { T } from "../T"
 export class SceneTitle extends Scene {
     private gltfViewer = new GltfViewer(window.innerWidth, window.innerHeight)
     private menu!: Menu
+    private titleUI!: HTMLElement
 
     constructor() {
         super()
@@ -26,11 +27,19 @@ export class SceneTitle extends Scene {
         this.playBgm()
 
         await this.gltfViewer.show("assets/3d/Hare.glb", {
-            scale: 2.4,
-            p: [2.5, -2, -14],
-            rotateY: T / 8,
+            scale: 12,
+            p: [5, -4, -16],
+            rotateY: (T * 4.5) / 8,
             animationName: "wait",
         })
+
+        this.titleUI = document.createElement("div")
+        this.titleUI.className = "title-ui"
+        this.titleUI.innerHTML = `
+            <div class="title-version">ver. Tentative</div>
+            <div class="title-copyright">© 2026 - Ososikirackets</div>
+            <div class="title-logo">THE<br>VECTORIZED<br>DAYS! (仮)</div>
+        `
 
         this.menu = new Menu(
             `
@@ -78,8 +87,10 @@ export class SceneTitle extends Scene {
             input,
             { playCancel: () => {}, playCursor: () => {}, playDisable: () => {}, playOk: () => {} },
         )
+        this.menu.container.classList.add("title-menu")
 
         Dom.container.appendChild(this.gltfViewer.canvas)
+        Dom.container.appendChild(this.titleUI)
         Dom.container.appendChild(this.menu.container)
     }
 
@@ -94,6 +105,7 @@ export class SceneTitle extends Scene {
     async end(): Promise<void> {
         this.gltfViewer.dispose()
         this.gltfViewer.canvas.remove()
+        this.titleUI.remove()
         this.menu.container.remove()
     }
 }
