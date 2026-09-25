@@ -4,6 +4,9 @@ import { bm } from "../bm"
 import { Menu } from "../utils/Menu/Menu"
 import { input } from "../input"
 import { Dom } from "../Dom"
+import { sc } from "../main"
+import { SceneGame } from "./SceneGame"
+import StageTutorial from "../Stage/StageTutorial"
 
 export class SceneTitle extends Scene {
     private gltfViewer = new GltfViewer(window.innerWidth, window.innerHeight)
@@ -36,7 +39,20 @@ export class SceneTitle extends Scene {
                             hides: [],
                             subMenu: () => ({
                                 elementId: "stages",
-                                options: () => [[{ type: "select", label: "test", onSelect: () => {} }]],
+                                options: () => [
+                                    [
+                                        {
+                                            type: "select",
+                                            label: "test",
+                                            onSelect: () => {
+                                                sc.goto(async () => {
+                                                    const stage = await StageTutorial.create()
+                                                    return new SceneGame(stage)
+                                                })
+                                            },
+                                        },
+                                    ],
+                                ],
                             }),
                         },
                     ],
@@ -69,5 +85,7 @@ export class SceneTitle extends Scene {
 
     async end(): Promise<void> {
         this.gltfViewer.dispose()
+        this.gltfViewer.canvas.remove()
+        this.menu.container.remove()
     }
 }

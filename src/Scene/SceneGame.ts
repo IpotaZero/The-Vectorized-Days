@@ -9,6 +9,7 @@ import { Menu } from "../utils/Menu/Menu"
 export class SceneGame extends Scene {
     private game!: Game
     private menu!: Menu
+    private canvas!: HTMLCanvasElement
 
     private mode: "action" | "pause" | "game-over" | "clear" = "action"
 
@@ -17,9 +18,13 @@ export class SceneGame extends Scene {
     }
 
     async start(): Promise<void> {
+        this.canvas = document.createElement("canvas")
+        this.canvas.id = "main"
+        Dom.container.appendChild(this.canvas)
+
         this.game = new Game(
             this.stage,
-            Dom.container.querySelector("#main")!,
+            this.canvas,
             input,
             () => {
                 this.mode = "clear"
@@ -53,5 +58,8 @@ export class SceneGame extends Scene {
 
     async end(): Promise<void> {
         this.game.dispose()
+        this.canvas.remove()
+        this.game.textBox.box.remove()
+        this.game.gltfViewer.canvas.remove()
     }
 }
