@@ -3,7 +3,7 @@ import { Vec, vec } from "@ipota/vec"
 import { Bullet } from "./Actor/Bullet"
 import { T } from "../T"
 import { GenUtils } from "@ipota/functions"
-import { NumberKeys } from "../utils/NumberKeys"
+import type { NumberKeys } from "@ipota/my-utils"
 import { Actor } from "./Actor/Actor"
 
 export function remodel<Parent extends Actor>(e: Parent) {

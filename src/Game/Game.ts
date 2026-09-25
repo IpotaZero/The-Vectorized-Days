@@ -24,7 +24,7 @@ export type GameLike = {
     readonly player: Player
     readonly enemies: Enemy[]
     readonly bullets: Bullet[]
-    readonly input: DigitalInput.Reader<"jump" | "left" | "right" | "fire" | "slash" | "ok" | "cancel">
+    readonly input: DigitalInput.Reader<"jump" | "left" | "right" | "up" | "down" | "fire" | "slash" | "ok" | "cancel">
     readonly width: number
     readonly height: number
     readonly textBox: TextBox
@@ -61,7 +61,7 @@ export class Game extends GameNode {
     constructor(
         private readonly stage: Stage,
         canvas: HTMLCanvasElement,
-        readonly input: DigitalInput.Reader<"right" | "left" | "jump" | "fire" | "ok" | "cancel">,
+        readonly input: DigitalInput.Reader<"right" | "left" | "up" | "down" | "jump" | "fire" | "ok" | "cancel">,
         readonly onFinish: () => void,
         readonly onGameOver: () => void,
     ) {
@@ -75,7 +75,7 @@ export class Game extends GameNode {
         this.canvas.width = WIDTH
         this.canvas.height = HEIGHT
 
-        this.textBox = new TextBox(this.input)
+        this.textBox = new TextBox(this.input, () => se.u.play())
         this.gltfViewer = new GltfViewer(WIDTH / 2, HEIGHT / 2)
     }
 

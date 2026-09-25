@@ -1,13 +1,11 @@
 {
     "dependencies": {
         "@ipota/bgm-manager": "^1.0.3",
-        "@ipota/focuses": "^1.0.1",
         "@ipota/functions": "^1.0.4",
         "@ipota/input": "^1.0.1",
-        "@ipota/pages": "^1.0.7",
+        "@ipota/my-utils": "1.0.24",
         "@ipota/vec": "^1.0.2",
         "@kayahr/tiled": "^0.0.1",
-        "jszip": "^3.10.1",
         "three": "^0.185.1",
         "vite": "^8.1.2"
     },

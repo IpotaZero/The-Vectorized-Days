@@ -1,48 +1,33 @@
 import { Dom } from "../Dom"
 import { Game } from "../Game/Game"
-import { focuses, focusesUpdater, sc } from "../main"
+import { sc } from "../main"
 import { input } from "../input"
-import { Pages } from "@ipota/pages"
 import { Scene } from "../utils/Scene/Scene"
-import * as tiled from "@kayahr/tiled"
 import { Stage } from "../Stage/Stage"
+import { Menu } from "../utils/Menu/Menu"
 
 export class SceneGame extends Scene {
     private game!: Game
-    private pages = new Pages()
+    private menu!: Menu
+
+    private mode: "action" | "pause" | "game-over" | "clear" = "action"
 
     constructor(private readonly stage: Stage) {
         super()
-
-        focusesUpdater(this.pages)
     }
 
     async start(): Promise<void> {
-        await this.pages.loadFromFile(Dom.container, "assets/pages/game/index.html")
-
-        this.pages.beforeEnter("retry", async () => {
-            sc.goto(async () => new SceneGame(this.stage))
-        })
-
-        this.pages.beforeEnter("next", async () => {
-            sc.goto(async () => await import("./SceneTitle").then(({ SceneTitle }) => new SceneTitle()))
-        })
-
         this.game = new Game(
             this.stage,
-            this.pages.getElement("#main", HTMLCanvasElement),
+            Dom.container.querySelector("#main")!,
             input,
             () => {
-                this.pages.enter("clear")
+                this.mode = "clear"
             },
             () => {
-                this.pages.enter("gameover")
+                this.mode = "game-over"
             },
         )
-
-        this.pages.beforeEnter("resume", () => {
-            this.pages.back(1)
-        })
 
         Dom.container.appendChild(this.game.textBox.box)
         Dom.container.appendChild(this.game.gltfViewer.canvas)
@@ -51,21 +36,22 @@ export class SceneGame extends Scene {
     }
 
     update() {
-        if (input.isPushed("pause")) {
-            if (this.pages.getCurrentPageId() === "pause") {
-                this.pages.back(1)
-            } else {
-                this.pages.enter("pause")
-            }
+        switch (this.mode) {
+            case "action":
+                this.modeAction()
+                break
         }
+    }
 
-        if (this.pages.getCurrentPageId() === "first") {
-            this.game.update()
+    private modeAction() {
+        this.game.update()
+
+        if (input.isPushed("pause")) {
+            this.mode = "pause"
         }
     }
 
     async end(): Promise<void> {
-        this.pages.dispose()
         this.game.dispose()
     }
 }
