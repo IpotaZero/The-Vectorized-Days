@@ -483,11 +483,18 @@ function createOptionElement(option: MenuOption): HTMLElement {
         optionEl.classList.add("disabled")
     }
 
+    // 矢印(::before)をラベルとは別要素にして絶対配置することで、
+    // 矢印の有無でラベルの表示位置(特に中央揃え時)がずれないようにする
+    const labelEl = document.createElement("span")
+    labelEl.className = "option-label"
+
     if (option.label instanceof HTMLElement) {
-        optionEl.appendChild(option.label)
+        labelEl.appendChild(option.label)
     } else {
-        optionEl.innerHTML = option.label
+        labelEl.innerHTML = option.label
     }
+
+    optionEl.appendChild(labelEl)
 
     return optionEl
 }

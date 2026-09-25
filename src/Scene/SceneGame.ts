@@ -88,6 +88,7 @@ export class SceneGame extends Scene {
             input,
             { playCancel: () => {}, playCursor: () => {}, playDisable: () => {}, playOk: () => {} },
         )
+        menu.container.classList.add("pause-menu")
         Dom.container.appendChild(menu.container)
         return menu
     }
