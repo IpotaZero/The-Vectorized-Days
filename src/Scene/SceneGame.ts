@@ -1,4 +1,3 @@
-import { Dom } from "../Dom"
 import { Game } from "../Game/Game"
 import { sc } from "../main"
 import { input } from "../input"
@@ -15,12 +14,13 @@ export class SceneGame extends Scene {
 
     constructor(private readonly stage: Stage) {
         super()
+        this.root.className = "scene-game"
     }
 
-    async start(): Promise<void> {
+    protected async onStart(): Promise<void> {
         this.canvas = document.createElement("canvas")
         this.canvas.id = "main"
-        Dom.container.appendChild(this.canvas)
+        this.root.appendChild(this.canvas)
 
         this.game = new Game(
             this.stage,
@@ -34,8 +34,8 @@ export class SceneGame extends Scene {
             },
         )
 
-        Dom.container.appendChild(this.game.textBox.box)
-        Dom.container.appendChild(this.game.gltfViewer.canvas)
+        this.root.appendChild(this.game.textBox.box)
+        this.root.appendChild(this.game.gltfViewer.canvas)
 
         await this.game.loadFromStage(this.stage)
     }
@@ -89,7 +89,7 @@ export class SceneGame extends Scene {
             { playCancel: () => {}, playCursor: () => {}, playDisable: () => {}, playOk: () => {} },
         )
         menu.container.classList.add("pause-menu")
-        Dom.container.appendChild(menu.container)
+        this.root.appendChild(menu.container)
         return menu
     }
 
@@ -107,11 +107,7 @@ export class SceneGame extends Scene {
         sc.goto(async () => await import("./SceneTitle.js").then(({ SceneTitle }) => new SceneTitle()))
     }
 
-    async end(): Promise<void> {
+    protected async onEnd(): Promise<void> {
         this.game.dispose()
-        this.canvas.remove()
-        this.game.textBox.box.remove()
-        this.game.gltfViewer.canvas.remove()
-        this.menu?.container.remove()
     }
 }

@@ -3,7 +3,6 @@ import { GltfViewer } from "../utils/GltfViewer"
 import { bm } from "../bm"
 import { Menu } from "../utils/Menu/Menu"
 import { input } from "../input"
-import { Dom } from "../Dom"
 import { sc } from "../main"
 import { SceneGame } from "./SceneGame"
 import StageTutorial from "../Stage/StageTutorial"
@@ -12,10 +11,12 @@ import { T } from "../T"
 export class SceneTitle extends Scene {
     private gltfViewer = new GltfViewer(window.innerWidth, window.innerHeight)
     private menu!: Menu
-    private titleUI!: HTMLElement
+    /** タイトルロゴ・バージョン表記・3Dモデルをまとめる箱。Stages選択時はこれごとスライドアウトする */
+    private content = document.createElement("div")
 
     constructor() {
         super()
+        this.root.className = "scene-title"
     }
 
     update() {
@@ -23,7 +24,7 @@ export class SceneTitle extends Scene {
         this.menu.update()
     }
 
-    async start(): Promise<void> {
+    protected async onStart(): Promise<void> {
         this.playBgm()
 
         await this.gltfViewer.show("assets/3d/Hare.glb", {
@@ -33,18 +34,20 @@ export class SceneTitle extends Scene {
             animationName: "wait",
         })
 
-        this.titleUI = document.createElement("div")
-        this.titleUI.className = "title-ui"
-        this.titleUI.innerHTML = `
+        this.content.className = "title-content"
+        this.content.innerHTML = `
             <div class="title-version">ver. Tentative</div>
             <div class="title-copyright">© 2026 - Ososikirackets</div>
             <div class="title-logo">THE<br>VECTORIZED<br>DAYS! (仮)</div>
         `
+        this.content.appendChild(this.gltfViewer.canvas)
 
         this.menu = new Menu(
             `
-                <div id="root"></div>
-                <div id="stages" class="fadeout"></div>
+                <div class="title-menu-stack">
+                    <div id="root"></div>
+                    <div id="stages" class="fadeout"></div>
+                </div>
             `,
             {
                 elementId: "root",
@@ -89,9 +92,8 @@ export class SceneTitle extends Scene {
         )
         this.menu.container.classList.add("title-menu")
 
-        Dom.container.appendChild(this.gltfViewer.canvas)
-        Dom.container.appendChild(this.titleUI)
-        Dom.container.appendChild(this.menu.container)
+        this.root.appendChild(this.content)
+        this.root.appendChild(this.menu.container)
     }
 
     private async playBgm() {
@@ -102,10 +104,7 @@ export class SceneTitle extends Scene {
         await bm.play()
     }
 
-    async end(): Promise<void> {
+    protected async onEnd(): Promise<void> {
         this.gltfViewer.dispose()
-        this.gltfViewer.canvas.remove()
-        this.titleUI.remove()
-        this.menu.container.remove()
     }
 }
