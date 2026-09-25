@@ -7,6 +7,7 @@ import { Dom } from "../Dom"
 import { sc } from "../main"
 import { SceneGame } from "./SceneGame"
 import StageTutorial from "../Stage/StageTutorial"
+import { T } from "../T"
 
 export class SceneTitle extends Scene {
     private gltfViewer = new GltfViewer(window.innerWidth, window.innerHeight)
@@ -23,6 +24,13 @@ export class SceneTitle extends Scene {
 
     async start(): Promise<void> {
         this.playBgm()
+
+        await this.gltfViewer.show("assets/3d/Hare.glb", {
+            scale: 2.4,
+            p: [2.5, -2, -14],
+            rotateY: T / 8,
+            animationName: "wait",
+        })
 
         this.menu = new Menu(
             `
