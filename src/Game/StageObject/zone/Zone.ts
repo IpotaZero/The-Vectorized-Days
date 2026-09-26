@@ -1,9 +1,12 @@
 import { Vec } from "@ipota/vec"
 import { StageObject } from "../StageObject.js"
 import { Game } from "../../Game.js"
+import { se } from "../../../se.js"
 
 // 触れると何かが起こる円形のゾーン
 export abstract class Zone extends StageObject {
+    private 前フレームに入っていたか = false
+
     constructor(
         game: Game,
         p: Vec,
@@ -24,8 +27,14 @@ export abstract class Zone extends StageObject {
     private *checkEnter() {
         const nowInside = this.isInsideArea(this.game.player.p)
 
-        if (nowInside) {
+        if (nowInside && !this.前フレームに入っていたか) {
+            se.zone.play()
+            this.前フレームに入っていたか = true
             yield* this.onEnter()
+        }
+
+        if (!nowInside) {
+            this.前フレームに入っていたか = false
         }
 
         yield
