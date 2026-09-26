@@ -60,7 +60,7 @@ export class Game extends GameObject {
         this.canvas.width = WIDTH
         this.canvas.height = HEIGHT
 
-        this.textBox = new TextBox(this.input, () => se.u.play())
+        this.textBox = new TextBox(this.input, () => se.untitled.play())
         this.gltfViewer = new GltfViewer(WIDTH / 2, HEIGHT / 2)
     }
 

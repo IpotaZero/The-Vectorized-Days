@@ -54,19 +54,22 @@ export class se {
     static u: SE
     static running: SE
     static damage: SE
+    static untitled: SE
 
     private static context: AudioContext
 
     static async load() {
         this.context = new AudioContext({ latencyHint: "interactive" })
-        ;[this.jump, this.doubleJump, this.land, this.zone, this.u, this.running, this.damage] = await Promise.all([
-            SE.create(this.context, "assets/se/jump.mp3"),
-            SE.create(this.context, "assets/se/double-jump.mp3"),
-            SE.create(this.context, "assets/se/landing.mp3"),
-            SE.create(this.context, "assets/se/se_touch.mp3"),
-            SE.create(this.context, "assets/se/u.mp3"),
-            SE.create(this.context, "assets/se/running.mp3", true),
-            SE.create(this.context, "assets/se/damage.mp3"),
-        ])
+        ;[this.jump, this.doubleJump, this.land, this.zone, this.u, this.running, this.damage, this.untitled] =
+            await Promise.all([
+                SE.create(this.context, "assets/se/jump.mp3"),
+                SE.create(this.context, "assets/se/double-jump.mp3"),
+                SE.create(this.context, "assets/se/landing.mp3"),
+                SE.create(this.context, "assets/se/se_touch.mp3"),
+                SE.create(this.context, "assets/se/u.mp3"),
+                SE.create(this.context, "assets/se/running.mp3", true),
+                SE.create(this.context, "assets/se/damage.mp3"),
+                SE.create(this.context, "assets/se/untitled.mp3"),
+            ])
     }
 }
