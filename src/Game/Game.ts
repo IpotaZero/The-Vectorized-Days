@@ -40,10 +40,9 @@ export class Game extends GameObject {
     /** 死亡演出～ページ切り替えまでの間trueになる */
     private isDead = false
 
-    private readonly stage: Stage
+    private stage!: Stage
 
-    constructor(
-        stage: (game: Game) => Promise<Stage>,
+    private constructor(
         canvas: HTMLCanvasElement,
         readonly input: DigitalInput.Reader<
             "right" | "left" | "up" | "down" | "jump" | "fire" | "ok" | "cancel" | "slash"
@@ -52,8 +51,6 @@ export class Game extends GameObject {
         readonly onGameOver: () => void,
     ) {
         super()
-
-        this.stage = await stage(this)
 
         this.canvas = canvas
         const ctx = canvas.getContext("2d")
@@ -73,8 +70,16 @@ export class Game extends GameObject {
         input: DigitalInput.Reader<"right" | "left" | "up" | "down" | "jump" | "fire" | "ok" | "cancel" | "slash">,
         onFinish: () => void,
         onGameOver: () => void,
-    ) {
-        return new this()
+    ): Promise<Game> {
+        const game = new Game(canvas, input, onFinish, onGameOver)
+        await game.loadStage(stage)
+        return game
+    }
+
+    private async loadStage(stage: (game: Game) => Promise<Stage>): Promise<void> {
+        this.stage = await stage(this)
+        this.camera = new Camera(this, vec(this.stage.start.x, this.stage.start.y))
+        this.reset()
     }
 
     dispose() {
@@ -104,7 +109,7 @@ export class Game extends GameObject {
         this.camera.scale = 1
 
         this.scripts.clear()
-        this.enemies = []
+        this.enemies = [...this.stage.enemies]
         this.bullets = []
 
         this.isDead = false

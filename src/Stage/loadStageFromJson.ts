@@ -4,6 +4,7 @@ import { Vec, vec } from "@ipota/vec"
 import { Actor } from "../Game/Actor/Actor.js"
 import { Game } from "../Game/Game.js"
 import { Enemy } from "../Game/Actor/Enemy.js"
+import { createEnemy } from "../Enemy/createEnemy.js"
 import { StageObject } from "../Game/StageObject/StageObject.js"
 import { Edge } from "../Game/StageObject/Edge.js"
 import { TextObject } from "../Game/StageObject/TextObject.js"
@@ -140,9 +141,17 @@ export async function loadStageFromMapData(game: Game, mapData: tiled.Map): Prom
             if (obj.name === "Enemy") {
                 const rawType = obj.properties?.find((p) => p.name === "enemy")?.value as string | undefined
 
-                // Tiledの "enemy" プロパティは マップファイルからの相対パスになる
+                // Tiledの "enemy" プロパティは マップファイルからの相対パスになるため、
+                // ファイル名部分（拡張子なし）だけを取り出してクラス名として扱う
+                const type = rawType?.replace(/^.*[\\/]/, "").replace(/\.ts$/, "")
 
-                enemies.push(new Enemy())
+                if (type) {
+                    const enemy = createEnemy(type, game)
+                    if (enemy) {
+                        enemy.p = vec(obj.x, obj.y)
+                        enemies.push(enemy)
+                    }
+                }
             }
 
             if (obj.name === "Goal") {

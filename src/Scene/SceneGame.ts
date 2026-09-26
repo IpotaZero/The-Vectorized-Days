@@ -22,7 +22,7 @@ export class SceneGame extends Scene {
         this.canvas.id = "main"
         this.root.appendChild(this.canvas)
 
-        this.game = new Game(
+        this.game = await Game.create(
             this.stage,
             this.canvas,
             input,
