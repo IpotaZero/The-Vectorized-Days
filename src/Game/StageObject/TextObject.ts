@@ -1,17 +1,18 @@
-import { vec, Vec } from "@ipota/vec"
-import { Movable } from "./Movable.js"
+import { Vec } from "@ipota/vec"
+import { StageObject } from "./StageObject"
+import { Game } from "../Game"
 
-export class TextObject extends Movable {
+export class TextObject extends StageObject {
     constructor(
+        game: Game,
         p: Vec,
         public width: number,
         public height: number,
         public rotation: number,
         public text: string,
         public fontSize: number = 16,
-        config: { joints?: Vec[]; cycle?: number } = {},
     ) {
-        super(p, config)
+        super(game, p)
     }
 
     draw(ctx: CanvasRenderingContext2D): void {

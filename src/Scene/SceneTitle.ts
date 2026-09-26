@@ -1,11 +1,11 @@
 import { Scene } from "../utils/Scene/Scene"
 import { GltfViewer } from "../utils/GltfViewer"
 import { bm } from "../bm"
-import { Menu } from "../utils/Menu/Menu"
+import { Menu, MenuOption } from "../utils/Menu/Menu"
 import { input } from "../input"
 import { sc } from "../main"
 import { SceneGame } from "./SceneGame"
-import StageTutorial from "../Stage/StageTutorial"
+import { Stage } from "../Stage/Stage"
 import { T } from "../T"
 
 export class SceneTitle extends Scene {
@@ -30,7 +30,7 @@ export class SceneTitle extends Scene {
         await this.gltfViewer.show("assets/3d/Hare.glb", {
             scale: 12,
             p: [5, -4, -16],
-            rotateY: (T * 4.5) / 8,
+            rotateY: (T * 4) / 8,
             animationName: "wait",
         })
 
@@ -60,18 +60,8 @@ export class SceneTitle extends Scene {
                             subMenu: () => ({
                                 elementId: "stages",
                                 options: () => [
-                                    [
-                                        {
-                                            type: "select",
-                                            label: "test",
-                                            onSelect: () => {
-                                                sc.goto(async () => {
-                                                    const stage = await StageTutorial.create()
-                                                    return new SceneGame(stage)
-                                                })
-                                            },
-                                        },
-                                    ],
+                                    [this.stageOption("test", () => import("../Stage/StageTutorial.js"))],
+                                    [this.stageOption("StageTest", () => import("../Stage/StageTest.js"))],
                                 ],
                             }),
                         },
@@ -94,6 +84,20 @@ export class SceneTitle extends Scene {
 
         this.root.appendChild(this.content)
         this.root.appendChild(this.menu.container)
+    }
+
+    /** ステージ選択肢を組み立てる。ステージファイルは選ばれるまで遅延インポートされる */
+    private stageOption<S extends typeof Stage>(label: string, load: () => Promise<{ default: S }>): MenuOption {
+        return {
+            type: "select",
+            label,
+            onSelect: () => {
+                sc.goto(async () => {
+                    const { default: StageClass } = await load()
+                    return new SceneGame(async (game) => await StageClass.create(game))
+                })
+            },
+        }
     }
 
     private async playBgm() {

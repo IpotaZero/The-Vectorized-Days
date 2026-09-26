@@ -1,17 +1,15 @@
-import { vec, Vec } from "@ipota/vec"
-import { Movable } from "./Movable.js"
+import { Vec } from "@ipota/vec"
+import { Game } from "../Game"
+import { StageObject } from "./StageObject"
 
 const COLLISION_MARGIN = 0
 
-export class Edge extends Movable {
-    // 最初の向きと長さを維持するため、start→end の相対ベクトル(オフセット)を固定で保持する。
-    // Movable の p (基準点) が joints/cycle に従って動いても、offset は変わらないので
-    // 向きと長さは常に一定に保たれる。
+export class Edge extends StageObject {
     private readonly offset: Vec
 
-    constructor(x0: number, y0: number, x1: number, y1: number, config: { joints?: Vec[]; cycle?: number } = {}) {
-        super(vec(x0, y0), config)
-        this.offset = vec(x1 - x0, y1 - y0)
+    constructor(game: Game, p0: Vec, p1: Vec) {
+        super(game, p0)
+        this.offset = p1.sub(p0)
     }
 
     get start(): Vec {

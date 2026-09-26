@@ -1,19 +1,18 @@
 import { Vec } from "@ipota/vec"
+import { StageObject } from "../StageObject.js"
 import { Game } from "../../Game.js"
-import { Movable } from "../Movable.js"
 
 // 触れると何かが起こる円形のゾーン
-export abstract class Zone extends Movable {
-    readonly width: number
-    readonly height: number
+export abstract class Zone extends StageObject {
+    constructor(
+        game: Game,
+        p: Vec,
+        readonly width: number,
+        readonly height: number,
+    ) {
+        super(game, p)
 
-    /** 直前のフレームでpがゾーン内にいたかどうか(「入った瞬間」判定用) */
-    private inside = false
-
-    constructor(p: Vec, width: number, height: number, config: { joints?: Vec[]; cycle?: number } = {}) {
-        super(p, config)
-        this.width = width
-        this.height = height
+        this.addScript(() => this.checkEnter(), { loop: Infinity })
     }
 
     /**
@@ -22,11 +21,14 @@ export abstract class Zone extends Movable {
      * また true になる。（SEや演出がゾーンに触れ続けている間ずっと
      * 再発火してしまうのを防ぐための「エッジ検出」方式）
      */
-    checkEnter(p: Vec): boolean {
-        const nowInside = this.isInsideArea(p)
-        const justEntered = nowInside && !this.inside
-        this.inside = nowInside
-        return justEntered
+    private *checkEnter() {
+        const nowInside = this.isInsideArea(this.game.player.p)
+
+        if (nowInside) {
+            yield* this.onEnter()
+        }
+
+        yield
     }
 
     private isInsideArea(p: Vec): boolean {
@@ -54,5 +56,5 @@ export abstract class Zone extends Movable {
         ctx.setLineDash([])
     }
 
-    abstract onEnter(obj: Game): Generator<void, void, unknown>
+    abstract onEnter(): Generator<void, void, unknown>
 }

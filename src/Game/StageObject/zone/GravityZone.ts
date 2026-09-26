@@ -6,13 +6,13 @@ import { Zone } from "./Zone"
 export class GravityZone extends Zone {
     readonly gravity: Vec
 
-    constructor(p: Vec, width: number, height: number, gravity: Vec, config: { joints?: Vec[]; cycle?: number } = {}) {
-        super(p, width, height, config)
+    constructor(game: Game, p: Vec, width: number, height: number, gravity: Vec) {
+        super(game, p, width, height)
         this.gravity = gravity
     }
 
-    override *onEnter({ player }: Game): Generator<void, void, unknown> {
-        player.g = this.gravity
+    override *onEnter(): Generator<void, void, unknown> {
+        this.game.player.g = this.gravity
     }
 
     override draw(ctx: CanvasRenderingContext2D): void {

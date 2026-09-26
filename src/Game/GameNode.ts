@@ -1,4 +1,4 @@
-export abstract class GameNode {
+export abstract class GameObject {
     protected scripts = new Map<string, Generator>()
 
     private sleepFrame: number = 0

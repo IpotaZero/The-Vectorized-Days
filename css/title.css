@@ -39,7 +39,7 @@
 .title-logo {
     position: absolute;
     left: 0;
-    bottom: 0;
+    bottom: 0.15em;
     padding: 0 0.15em;
 
     font-weight: 900;

@@ -6,19 +6,19 @@ import { Zone } from "./Zone"
 export class ScaleZone extends Zone {
     readonly scale: number
 
-    constructor(p: Vec, width: number, height: number, scale: number, config: { joints?: Vec[]; cycle?: number } = {}) {
-        super(p, width, height, config)
+    constructor(game: Game, p: Vec, width: number, height: number, scale: number) {
+        super(game, p, width, height)
         this.scale = scale
     }
 
-    override *onEnter({ camera }: Game): Generator<void, void, unknown> {
+    override *onEnter(): Generator<void, void, unknown> {
         const frame = 15
 
-        const startScale = camera.scale
+        const startScale = this.game.camera.scale
         const diffScale = this.scale - startScale
 
         for (let i = 0; i < frame; i++) {
-            camera.scale = startScale + diffScale * Ease.Out((i + 1) / frame)
+            this.game.camera.scale = startScale + diffScale * Ease.Out((i + 1) / frame)
             yield
         }
     }

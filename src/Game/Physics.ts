@@ -1,14 +1,14 @@
 import { Vec, vec } from "@ipota/vec"
-import { GameLike } from "./Game"
+import { Game } from "./Game"
 import { Actor } from "./Actor/Actor"
-import { Edge } from "./movable/Edge"
+import { Edge } from "./StageObject/Edge"
 
 const SKIN = 0.01 // 数値誤差対策のごく小さい押し戻し量
 const MAX_SLIDE_ITER = 4 // 1フレームあたりの最大スライド回数
 
 export class Physics {
     constructor(
-        private readonly game: GameLike,
+        private readonly game: Game,
         private readonly parent: Actor & { v: Vec; g: Vec },
         private readonly onOnFloor: () => void,
     ) {}
@@ -53,8 +53,7 @@ export class Physics {
 
             // 最も早く衝突する床を探す
             for (const floor of floors) {
-                // 【変更】床の移動量(dp)を考慮し、相対的な移動開始位置を計算して判定する
-                const relStart = start.add(floor.dp)
+                const relStart = start
                 const hit = floor.getSweepHit(relStart, end)
                 if (!hit) continue
                 if (!closest || hit.t < closest.t) {

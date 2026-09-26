@@ -1,28 +1,31 @@
-import { GameLike } from "../Game/Game"
-import { Movable } from "../Game/movable/Movable"
+import { Actor } from "../Game/Actor/Actor"
+import { Edge } from "../Game/StageObject/Edge"
+import { Enemy } from "../Game/Actor/Enemy"
+import { Game } from "../Game/Game"
 
-import { EnemySpawn, loadStageFromUrl } from "./loadStageFromJson"
+import { loadStageFromUrl } from "./loadStageFromJson"
+import { StageObject } from "../Game/StageObject/StageObject"
 
 export class Stage {
     protected static readonly mapUrl: string
 
     isBossBattle = false
 
+    readonly edges: readonly Edge[]
+
     constructor(
         readonly width: number,
         readonly height: number,
-        readonly movables: Movable[],
         readonly start: { x: number; y: number },
-        readonly enemySpawns: EnemySpawn[] = [],
-    ) {}
-
-    static async create(): Promise<Stage> {
-        const { width, height, movables, start, enemySpawns } = await loadStageFromUrl(this.mapUrl)
-
-        console.log("Stage.create", { width, height, movables, start, enemySpawns })
-
-        return new this(width, height, movables, start, enemySpawns)
+        readonly stageObject: StageObject[],
+        readonly enemies: Enemy[],
+    ) {
+        this.edges = stageObject.filter((m) => m instanceof Edge)
     }
 
-    *setup(game: GameLike): Generator<void, void, unknown> {}
+    static async create(game: Game): Promise<Stage> {
+        const { width, height, stageObject, start, enemies } = await loadStageFromUrl(game, this.mapUrl)
+
+        return new this(width, height, start, stageObject, enemies)
+    }
 }

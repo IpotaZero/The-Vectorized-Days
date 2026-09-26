@@ -1,6 +1,6 @@
 import { vec } from "@ipota/vec"
 import { Enemy } from "../Game/Actor/Enemy"
-import { GameLike } from "../Game/Game"
+import { Game } from "../Game/Game"
 import { Remodel, remodel } from "../Game/Remodel"
 import { T } from "../T"
 import { bm } from "../bm"
@@ -8,7 +8,7 @@ import { bm } from "../bm"
 export default class extends Enemy {
     isBoss = true
 
-    constructor(game: GameLike) {
+    constructor(game: Game) {
         super(game, 100, 96)
         this.p = vec(800, 600)
 

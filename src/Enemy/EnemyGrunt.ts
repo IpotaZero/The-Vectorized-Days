@@ -1,6 +1,6 @@
 import { vec } from "@ipota/vec"
 import { Enemy } from "../Game/Actor/Enemy"
-import { GameLike } from "../Game/Game"
+import { Game } from "../Game/Game"
 import { remodel } from "../Game/Remodel"
 
 /**
@@ -17,7 +17,7 @@ import { remodel } from "../Game/Remodel"
  *   3. 配置した座標がそのまま出現位置(this.p)になる
  */
 export default class extends Enemy {
-    constructor(game: GameLike) {
+    constructor(game: Game) {
         super(game, 10, 32)
 
         // モデルはC8.glbを流用（専用モデルが用意できたら差し替える）

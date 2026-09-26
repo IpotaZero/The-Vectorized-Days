@@ -4,10 +4,10 @@ import { vec, Vec } from "@ipota/vec"
 import { Actor } from "./Actor"
 import { T } from "../../T"
 import { remodel } from "../Remodel"
-import { GameLike } from "../Game"
 import { GltfViewer } from "../../utils/GltfViewer"
 import { Physics } from "../Physics"
 import { se } from "../../se"
+import { Game } from "../Game"
 
 const SPEED = 3
 const JUMP = 48 * 0.3
@@ -44,7 +44,7 @@ export class Player extends Actor {
     /**最後に入力した方向 */
     private direction = 1
 
-    constructor(game: GameLike, start: Vec) {
+    constructor(game: Game, start: Vec) {
         super(game)
         this.p = start
         this.life = 10

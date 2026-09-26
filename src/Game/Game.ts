@@ -1,7 +1,5 @@
 import { Camera } from "./Actor/Camera"
 import { DigitalInput } from "@ipota/input"
-import { Zone } from "./movable/zone/Zone"
-import { Edge } from "./movable/Edge"
 import { Vec, vec } from "@ipota/vec"
 import { Player } from "./Actor/Player"
 import { Enemy } from "./Actor/Enemy"
@@ -9,37 +7,21 @@ import { Bullet } from "./Actor/Bullet"
 import { BulletDrawer } from "./BulletDrawer"
 import { BulletCollision } from "./BulletCollision"
 import { Ctx } from "../utils/Functions/Ctx"
-import { TextBox } from "../utils/TextBox"
-import { GameNode } from "./GameNode"
+import { GameObject } from "./GameNode"
 import { looper } from "../looper"
 import { GltfViewer } from "../utils/GltfViewer"
 import { Stage } from "../Stage/Stage"
-import { createEnemy } from "../Enemy/createEnemy"
 import { se } from "../se"
+import { TextBox } from "../utils/TextBox"
+import { Edge } from "./StageObject/Edge"
 
 const WIDTH = 32 * 40
 const HEIGHT = 32 * 24
 
-export type GameLike = {
-    readonly player: Player
-    readonly enemies: Enemy[]
-    readonly bullets: Bullet[]
-    readonly input: DigitalInput.Reader<"jump" | "left" | "right" | "up" | "down" | "fire" | "slash" | "ok" | "cancel">
-    readonly width: number
-    readonly height: number
-    readonly textBox: TextBox
-    readonly gltfViewer: GltfViewer
-    /** 衝突判定の対象となる床・壁のEdge一覧 */
-    readonly floor: Edge[]
-    /** ステージ既定の重力(向きと強さ) */
-    isBossBattle: boolean
-    onFinish: () => void
-}
-
 /**
  * ゲーム本体をカプセル化したクラス。
  */
-export class Game extends GameNode {
+export class Game extends GameObject {
     private readonly canvas: HTMLCanvasElement
     private readonly ctx: CanvasRenderingContext2D
 
@@ -58,14 +40,20 @@ export class Game extends GameNode {
     /** 死亡演出～ページ切り替えまでの間trueになる */
     private isDead = false
 
+    private readonly stage: Stage
+
     constructor(
-        private readonly stage: Stage,
+        stage: (game: Game) => Promise<Stage>,
         canvas: HTMLCanvasElement,
-        readonly input: DigitalInput.Reader<"right" | "left" | "up" | "down" | "jump" | "fire" | "ok" | "cancel">,
+        readonly input: DigitalInput.Reader<
+            "right" | "left" | "up" | "down" | "jump" | "fire" | "ok" | "cancel" | "slash"
+        >,
         readonly onFinish: () => void,
         readonly onGameOver: () => void,
     ) {
         super()
+
+        this.stage = await stage(this)
 
         this.canvas = canvas
         const ctx = canvas.getContext("2d")
@@ -79,17 +67,20 @@ export class Game extends GameNode {
         this.gltfViewer = new GltfViewer(WIDTH / 2, HEIGHT / 2)
     }
 
+    static async create(
+        stage: (game: Game) => Promise<Stage>,
+        canvas: HTMLCanvasElement,
+        input: DigitalInput.Reader<"right" | "left" | "up" | "down" | "jump" | "fire" | "ok" | "cancel" | "slash">,
+        onFinish: () => void,
+        onGameOver: () => void,
+    ) {
+        return new this()
+    }
+
     dispose() {
         this.gltfViewer.dispose()
         this.enemies.forEach((e) => e.dispose())
         this.player.dispose()
-    }
-
-    /** ステージを読み込み、初期状態をセットアップする */
-    async loadFromStage(stage: Stage): Promise<void> {
-        console.log(stage)
-        this.camera = new Camera(this, vec(stage.start.x, stage.start.y))
-        this.reset()
     }
 
     get width() {
@@ -104,8 +95,8 @@ export class Game extends GameNode {
         return this.stage.isBossBattle
     }
 
-    get floor(): Edge[] {
-        return this.stage.movables.filter((obj): obj is Edge => obj instanceof Edge)
+    get floor(): readonly Edge[] {
+        return this.stage.edges
     }
 
     private reset(): void {
@@ -116,21 +107,7 @@ export class Game extends GameNode {
         this.enemies = []
         this.bullets = []
 
-        this.spawnEnemiesFromStage()
         this.isDead = false
-
-        this.addScript(this.stage.setup.bind(this.stage, this))
-    }
-
-    /** Tiledで配置されたEnemyを、Game自身が完成した後に実体化する */
-    private spawnEnemiesFromStage(): void {
-        for (const spawn of this.stage.enemySpawns) {
-            const enemy = createEnemy(spawn.type, this)
-            if (!enemy) continue
-
-            enemy.p = vec(spawn.x, spawn.y)
-            this.enemies.push(enemy)
-        }
     }
 
     update(): void {
@@ -139,7 +116,6 @@ export class Game extends GameNode {
 
         super.update()
         this.updateMovables()
-        this.handleZoneEnter()
         this.updateBulletAndEnemy()
         this.updatePlayer()
         this.updateCamera()
@@ -158,19 +134,7 @@ export class Game extends GameNode {
     }
 
     private updateMovables(): void {
-        this.stage.movables.forEach((movable) => movable.update())
-    }
-
-    private handleZoneEnter(): void {
-        this.stage.movables
-            .filter((obj) => obj instanceof Zone)
-            .forEach((zone) => {
-                if (zone.checkEnter(this.player.getDanmakuP())) {
-                    se.zone.play()
-                    const gen = zone.onEnter(this)
-                    this.addScript(() => gen)
-                }
-            })
+        this.stage.stageObject.forEach((s) => s.update())
     }
 
     private updateBulletAndEnemy() {
@@ -271,7 +235,7 @@ export class Game extends GameNode {
         ctx.save()
         this.camera.apply(ctx, WIDTH, HEIGHT)
 
-        for (const t of stage.movables) t.draw(ctx)
+        for (const t of stage.stageObject) t.draw(ctx)
 
         this.bullets.forEach((b) => this.bulletDrawer.draw(b, ctx))
         this.enemies.forEach((e) => e.draw(ctx))

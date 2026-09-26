@@ -1,7 +1,7 @@
 import { vec, Vec } from "@ipota/vec"
 import { Actor } from "./Actor"
-import { GameLike } from "../Game"
 import { Ease } from "@ipota/functions"
+import { Game } from "../Game"
 
 const normalizeAngle = (a: number): number => {
     while (a > Math.PI) a -= Math.PI * 2
@@ -16,7 +16,7 @@ export class Camera extends Actor {
 
     private shakeP = vec(0, 0)
 
-    constructor(game: GameLike, start: Vec) {
+    constructor(game: Game, start: Vec) {
         super(game)
         this.p = start
     }

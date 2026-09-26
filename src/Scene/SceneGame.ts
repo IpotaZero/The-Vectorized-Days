@@ -12,7 +12,7 @@ export class SceneGame extends Scene {
 
     private mode: "action" | "pause" | "game-over" | "clear" = "action"
 
-    constructor(private readonly stage: Stage) {
+    constructor(private readonly stage: (game: Game) => Promise<Stage>) {
         super()
         this.root.className = "scene-game"
     }
@@ -36,8 +36,6 @@ export class SceneGame extends Scene {
 
         this.root.appendChild(this.game.textBox.box)
         this.root.appendChild(this.game.gltfViewer.canvas)
-
-        await this.game.loadFromStage(this.stage)
     }
 
     update() {

@@ -1,11 +1,11 @@
 import { vec, Vec } from "@ipota/vec"
 import { Actor } from "./Actor"
 import { Ease } from "@ipota/functions"
-import { GameLike } from "../Game"
 import { Ctx } from "../../utils/Functions/Ctx"
 import { GltfViewer } from "../../utils/GltfViewer"
 import { remodel } from "../Remodel"
 import { T } from "../../T"
+import { Game } from "../Game"
 
 export abstract class Enemy extends Actor {
     private shakeP = vec(0, 0)
@@ -17,7 +17,7 @@ export abstract class Enemy extends Actor {
 
     isInvincible = false
 
-    constructor(game: GameLike, life: number, r: number) {
+    constructor(game: Game, life: number, r: number) {
         super(game)
         this.life = life
         this.maxLife = life

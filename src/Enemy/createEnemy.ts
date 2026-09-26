@@ -1,5 +1,5 @@
 import { Enemy } from "../Game/Actor/Enemy"
-import { GameLike } from "../Game/Game"
+import { Game } from "../Game/Game"
 
 // このフォルダ内のEnemyサブクラスを、Tiledで指定された名前文字列から
 // 解決できるように、あらかじめ全モジュールを読み込んでおく
@@ -14,7 +14,7 @@ const modules = import.meta.glob<Record<string, unknown>>("./*.ts", { eager: tru
  * ここでは実体化せず、位置と種類だけをデータとして持ち回る。
  * 実際の生成はGameが構築された後（Game.reset()内）に、この関数を通して行う。
  */
-export function createEnemy(type: string, game: GameLike): Enemy | undefined {
+export function createEnemy(type: string, game: Game): Enemy | undefined {
     const mod = modules[`./${type}.ts`]
 
     if (!mod) {
@@ -22,7 +22,7 @@ export function createEnemy(type: string, game: GameLike): Enemy | undefined {
         return undefined
     }
 
-    const EnemyClass = mod.default as (new (game: GameLike) => Enemy) | undefined
+    const EnemyClass = mod.default as (new (game: Game) => Enemy) | undefined
 
     if (!EnemyClass) {
         console.warn(`[createEnemy] "${type}" というexportがモジュール内に見つかりません`)
